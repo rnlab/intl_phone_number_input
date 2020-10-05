@@ -18,6 +18,8 @@ class SelectorButton extends StatelessWidget {
   final bool isScrollControlled;
 
   final ValueChanged<Country> onCountryChanged;
+  final Function flagWidget;
+  final Color colorBottomSheet;
 
   const SelectorButton({
     Key key,
@@ -31,6 +33,8 @@ class SelectorButton extends StatelessWidget {
     @required this.onCountryChanged,
     @required this.isEnabled,
     @required this.isScrollControlled,
+    this.flagWidget,
+    this.colorBottomSheet = Colors.white,
   }) : super(key: key);
 
   @override
@@ -51,6 +55,8 @@ class SelectorButton extends StatelessWidget {
                   onChanged: isEnabled ? onCountryChanged : null,
                 ),
               )
+            : flagWidget is Function && flagWidget(country) is Widget
+                ? flagWidget(country)
             : Item(
                 country: country,
                 showFlag: selectorConfig.showFlags,
@@ -79,13 +85,15 @@ class SelectorButton extends StatelessWidget {
                   }
                 : null,
             child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Item(
-                country: country,
-                showFlag: selectorConfig.showFlags,
-                useEmoji: selectorConfig.useEmoji,
-                textStyle: selectorTextStyle,
-              ),
+              padding: const EdgeInsets.all(0.0),
+              child: flagWidget is Function && flagWidget(country) is Widget
+                  ? flagWidget(country)
+                  : Item(
+                      country: country,
+                      showFlag: selectorConfig.showFlags,
+                      useEmoji: selectorConfig.useEmoji,
+                      textStyle: selectorTextStyle,
+                    ),
             ),
           );
   }

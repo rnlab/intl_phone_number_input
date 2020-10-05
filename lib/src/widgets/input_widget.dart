@@ -74,6 +74,8 @@ class InternationalPhoneNumberInput extends StatefulWidget {
 
   final List<String> countries;
 
+  final Function flagWidget;
+  final Color colorBottomSheet;
   InternationalPhoneNumberInput(
       {Key key,
       this.selectorConfig = const SelectorConfig(),
@@ -86,7 +88,7 @@ class InternationalPhoneNumberInput extends StatefulWidget {
       this.textFieldController,
       this.keyboardAction,
       this.initialValue,
-      this.hintText = 'Phone number',
+      this.hintText,
       this.errorMessage = 'Invalid phone number',
       this.selectorButtonOnErrorPadding = 24,
       this.maxLength = 15,
@@ -104,8 +106,10 @@ class InternationalPhoneNumberInput extends StatefulWidget {
       this.inputDecoration,
       this.searchBoxDecoration,
       this.focusNode,
-      this.countries})
-      : super(key: key);
+      this.countries,
+      this.flagWidget,
+      this.colorBottomSheet = Colors.white,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _InputWidgetState();
@@ -254,10 +258,13 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
 
   /// Creates or Select [InputDecoration]
   InputDecoration getInputDecoration(InputDecoration decoration) {
-    return decoration ??
+    return decoration?.copyWith(
+          hintText: widget.hintText ?? '${(country?.dialCode ?? '').padRight(5, "   ")}',
+          border: widget.inputBorder ?? UnderlineInputBorder(),
+        ) ??
         InputDecoration(
           border: widget.inputBorder ?? UnderlineInputBorder(),
-          hintText: widget.hintText,
+          hintText: widget.hintText ?? '${(country?.dialCode ?? '').padRight(5, "   ")}',
         );
   }
 
@@ -329,13 +336,14 @@ class _InputWidgetView
                 isEnabled: widget.isEnabled,
                 autoFocusSearchField: widget.autoFocusSearch,
                 isScrollControlled: widget.countrySelectorScrollControlled,
+                flagWidget: widget.flagWidget,
+                colorBottomSheet: widget.colorBottomSheet,
               ),
               SizedBox(
                 height: state.selectorButtonBottomPadding,
               ),
             ],
           ),
-          SizedBox(width: 12),
           Flexible(
             child: TextFormField(
               key: Key(TestHelper.TextInputKeyValue),
